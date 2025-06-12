@@ -1,0 +1,149 @@
+#@title Trình Xác Thực Chữ Ký Số
+#1. Cài đặt các thư viện cần thiết
+!pip install flask pyngrok cryptography
+
+#2. Mã nguồn ứng dụng Flask (Đã sửa lỗi)
+import os
+from flask import Flask, request, render_template_string, flash, redirect, url_for
+from werkzeug.utils import secure_filename
+from pyngrok import ngrok, conf
+from cryptography.hazmat.primitives import hashes
+# THAY ĐỔI 1: Thêm 'utils' vào câu lệnh import
+from cryptography.hazmat.primitives.asymmetric import padding, utils
+from cryptography.hazmat.primitives import serialization
+from cryptography.exceptions import InvalidSignature
+
+# Cấu hình ngrok với token của bạn
+# Thay 'YOUR_NGROK_AUTH_TOKEN' bằng token ngrok thực tế của bạn
+NGROK_AUTH_TOKEN = "2vQiHuSkEACuMQdfLaOTROncorU_3gmW5HFXANyHBHUfm2ufF" #<-- THAY TOKEN CỦA BẠN VÀO ĐÂY
+conf.get_default().auth_token = NGROK_AUTH_TOKEN
+
+# Tạo ứng dụng Flask
+app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = 'uploads'
+app.secret_key = 'supersecretkey'
+
+# Tạo thư mục uploads nếu chưa có
+if not os.path.exists('uploads'):
+    os.makedirs('uploads')
+
+# Hàm băm file
+def hash_file(filename):
+    """Băm nội dung của một file sử dụng thuật toán SHA-256."""
+    hasher = hashes.Hash(hashes.SHA256())
+    with open(filename, 'rb') as f:
+        while chunk := f.read(4096):
+            hasher.update(chunk)
+    return hasher.finalize()
+
+# Giao diện HTML của trang web (Không thay đổi)
+HTML_TEMPLATE = """
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xác Thực Chữ Ký Số</title>
+    <style>
+        body { font-family: sans-serif; margin: 2em; background-color: #f4f4f9; color: #333; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { color: #444; text-align: center; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="file"] { border: 1px solid #ccc; padding: 10px; width: 100%; box-sizing: border-box; border-radius: 4px; }
+        textarea { border: 1px solid #ccc; padding: 10px; width: 100%; box-sizing: border-box; border-radius: 4px; font-family: monospace; font-size: 14px; }
+        button { background-color: #007bff; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; width: 100%; }
+        button:hover { background-color: #0056b3; }
+        .flash { padding: 10px; margin-top: 20px; border-radius: 4px; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .danger { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Trình Xác Thực Chữ Ký Số</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <form method="post" enctype="multipart/form-data" action="/">
+            <div class="form-group">
+                <label for="file">1. Tải lên tệp gốc:</label>
+                <input type="file" name="file" id="file" required>
+            </div>
+            <div class="form-group">
+                <label for="signature">2. Dán chữ ký số (định dạng Hex):</label>
+                <textarea name="signature" id="signature" rows="5" required placeholder="Dán chuỗi chữ ký dạng hex (ví dụ: d9a74581...)..."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="public_key">3. Dán nội dung khóa công khai (định dạng PEM):</label>
+                <textarea name="public_key" id="public_key" rows="8" required placeholder="-----BEGIN PUBLIC KEY-----\nMIIB...IDAQAB\n-----END PUBLIC KEY-----"></textarea>
+            </div>
+            <button type="submit">Xác thực</button>
+        </form>
+    </div>
+</body>
+</html>
+"""
+
+@app.route('/', methods=['GET', 'POST'])
+def upload_and_verify():
+    if request.method == 'POST':
+        if 'file' not in request.files or 'signature' not in request.form or 'public_key' not in request.form:
+            flash('Yêu cầu không hợp lệ, vui lòng thử lại!', 'danger')
+            return redirect(request.url)
+
+        file = request.files['file']
+        signature_hex = request.form['signature'].strip()
+        public_key_pem = request.form['public_key'].strip()
+
+        if file.filename == '' or not signature_hex or not public_key_pem:
+            flash('Vui lòng cung cấp đầy đủ cả 3 thông tin!', 'danger')
+            return redirect(request.url)
+
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(file.filename))
+        file.save(file_path)
+
+        try:
+            hashed_message = hash_file(file_path)
+
+            public_key_bytes = public_key_pem.encode('utf-8')
+            public_key = serialization.load_pem_public_key(public_key_bytes)
+
+            signature = bytes.fromhex(signature_hex)
+
+            # THAY ĐỔI 2: Thêm tham số 'algorithm' vào hàm verify
+            public_key.verify(
+                signature,
+                hashed_message, # Dữ liệu đã được băm
+                padding.PSS(
+                    mgf=padding.MGF1(hashes.SHA256()),
+                    salt_length=padding.PSS.MAX_LENGTH
+                ),
+                utils.Prehashed(hashes.SHA256()) # Chỉ định thuật toán đã dùng để băm
+            )
+            flash('✅ Xác thực thành công! Đây là chữ ký hợp lệ.', 'success')
+
+        except InvalidSignature:
+            flash('❌ Xác thực không thành công! Chữ ký không khớp với tệp.', 'danger')
+        except (ValueError) as e:
+            flash(f'❌ Lỗi định dạng đầu vào! Hãy chắc chắn rằng chữ ký ở dạng Hex và khóa công khai ở dạng PEM. Chi tiết: {e}', 'danger')
+        except Exception as e:
+            flash(f'Đã xảy ra lỗi trong quá trình xác thực: {e}', 'danger')
+        finally:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+
+        return redirect(url_for('upload_and_verify'))
+
+    return render_template_string(HTML_TEMPLATE)
+
+# Mở một tunnel HTTP trên cổng 5000
+public_url = ngrok.connect(5000)
+print(" * Trang web của bạn đang chạy tại:", public_url)
+
+# Chạy ứng dụng Flask
+app.run(port=5000)
