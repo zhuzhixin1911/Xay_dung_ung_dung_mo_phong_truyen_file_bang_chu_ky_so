@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-
-# Nội dung đầy đủ cho tệp README.md được lưu trong một chuỗi nhiều dòng
-readme_content = """
 # Công cụ Ký và Xác thực Chữ ký số cho Tài liệu
 
 Dự án này cung cấp một bộ hai công cụ dựa trên web được xây dựng bằng Python, Flask và thư viện `cryptography` để minh họa quá trình tạo và xác thực chữ ký số cho tài liệu.
@@ -41,40 +37,30 @@ Cả hai ứng dụng đều sử dụng `pyngrok` để tạo một đường h
 2.  Sau khi đăng nhập, truy cập vào mục [Your Authtoken](https://dashboard.ngrok.com/get-started/your-authtoken).
 3.  Sao chép token của bạn.
 
-### 3. Cài đặt
+### 3. Chạy Code
 
-1.  **Tạo thư mục cho dự án:**
-    ```bash
-    mkdir digital-signature-tool
-    cd digital-signature-tool
-    ```
+1.  **Tạo phần ô code trong Coblab để lưu trữ và chạy hai đoạn code**
 
 2.  **Lưu mã nguồn:**
-    * Lưu đoạn mã "Trình Tạo Chữ Ký Số" vào một tệp có tên `generator.py`.
-    * Lưu đoạn mã "Trình Xác Thực Chữ Ký Số" vào một tệp có tên `verifier.py`.
+    * Lưu đoạn mã "Trình Tạo Chữ Ký Số" vào một ô`.
+    * Lưu đoạn mã "Trình Xác Thực Chữ Ký Số" vào một ô.
 
 3.  **Cấu hình Ngrok Authtoken:**
     * Mở cả hai tệp `generator.py` và `verifier.py`.
     * Tìm dòng sau và thay thế `YOUR_NGROK_AUTH_TOKEN` bằng token thật của bạn:
         ```python
         NGROK_AUTH_TOKEN = "YOUR_NGROK_AUTH_TOKEN" #<-- THAY TOKEN CỦA BẠN VÀO ĐÂY
-        ```
-
-4.  **Cài đặt các thư viện cần thiết:**
-    Chạy lệnh sau trong terminal hoặc command prompt:
-    ```bash
-    pip install flask pyngrok cryptography
-    ```
-
+        ``
+        
 ### 4. Quy trình làm việc
 
 #### Bước 1: Tạo Chữ ký số
 
 1.  Chạy ứng dụng tạo chữ ký:
     ```bash
-    python generator.py
+    bấm núi play ở góc trái màn hình
     ```
-2.  Terminal sẽ hiển thị một URL công khai từ Ngrok. Ví dụ:
+2.  Sẽ hiển thị một URL công khai từ Ngrok. Ví dụ:
     ```
     * Trang web của bạn đang chạy tại: https://<random-string>.ngrok-free.app
     ```
@@ -94,7 +80,7 @@ Cả hai ứng dụng đều sử dụng `pyngrok` để tạo một đường h
 1.  Mở một cửa sổ terminal mới (giữ nguyên terminal cũ đang chạy `generator.py`).
 2.  Chạy ứng dụng xác thực:
     ```bash
-    python verifier.py
+    bấm núi play ở góc trái màn hình
     ```
 3.  Một URL Ngrok mới sẽ được tạo cho trình xác thực. Mở URL này trong trình duyệt.
 4.  Trên trang xác thực, bạn cần cung cấp 3 thông tin:
@@ -106,23 +92,4 @@ Cả hai ứng dụng đều sử dụng `pyngrok` để tạo một đường h
     * `✅ Xác thực thành công! Đây là chữ ký hợp lệ.` nếu mọi thông tin đều khớp.
     * `❌ Xác thực không thành công! Chữ ký không khớp với tệp.` nếu tài liệu đã bị thay đổi hoặc chữ ký/khóa công khai không đúng.
 
-## ⚠️ Khuyến cáo Bảo mật
-
--   **Mục đích giáo dục:** Công cụ này được tạo ra chủ yếu cho mục đích học tập và minh họa. **KHÔNG** sử dụng nó cho các ứng dụng thực tế, nhạy cảm về bảo mật mà không có sự kiểm định và cải tiến chuyên sâu.
--   **Quản lý khóa:** Trong thực tế, việc tạo và quản lý khóa cần tuân theo các quy trình bảo mật nghiêm ngặt. Khóa bí mật không bao giờ được hiển thị hoặc truyền đi một cách không an toàn như trong ví dụ này.
--   **Giới hạn của Ngrok:** Phiên bản miễn phí của Ngrok có thể có các giới hạn về băng thông và thời gian hoạt động. Đường hầm sẽ bị đóng khi bạn dừng ứng dụng.
-"""
-
-# Tên tệp sẽ được tạo
-file_name = "README.md"
-
-try:
-    # Mở tệp ở chế độ ghi ('w') với mã hóa utf-8 để hỗ trợ tiếng Việt và các ký tự đặc biệt
-    with open(file_name, "w", encoding="utf-8") as file:
-        # Ghi nội dung vào tệp
-        file.write(readme_content)
-    
-    print(f"✅ Tệp '{file_name}' đã được tạo và ghi nội dung thành công!")
-
-except IOError as e:
-    print(f"❌ Đã xảy ra lỗi khi ghi tệp: {e}")
+## Phan Văn Đằng - Đại Học Đại Nam
