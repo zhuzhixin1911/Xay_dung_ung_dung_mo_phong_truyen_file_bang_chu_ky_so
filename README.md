@@ -2,8 +2,8 @@
 
 Dự án này cung cấp một bộ hai công cụ dựa trên web được xây dựng bằng Python, Flask và thư viện `cryptography` để minh họa quá trình tạo và xác thực chữ ký số cho tài liệu.
 
-1.  **Trình Tạo Chữ Ký Số (`generator.py`):** Một ứng dụng web cho phép người dùng tải lên một tài liệu, sau đó tạo ra một cặp khóa (công khai và bí mật), mã băm (hash) của tài liệu, và chữ ký số tương ứng.
-2.  **Trình Xác Thực Chữ Ký Số (`verifier.py`):** Một ứng dụng web dùng để xác thực tính toàn vẹn và nguồn gốc của tài liệu. Người dùng cần cung cấp tài liệu gốc, chữ ký số và khóa công khai để kiểm tra.
+1.  **Trình Tạo Chữ Ký Số:** Một ứng dụng web cho phép người dùng tải lên một tài liệu, sau đó tạo ra một cặp khóa (công khai và bí mật), mã băm (hash) của tài liệu, và chữ ký số tương ứng.
+2.  **Trình Xác Thực Chữ Ký Số:** Một ứng dụng web dùng để xác thực tính toàn vẹn và nguồn gốc của tài liệu. Người dùng cần cung cấp tài liệu gốc, chữ ký số và khóa công khai để kiểm tra.
 
 Cả hai ứng dụng đều sử dụng `pyngrok` để tạo một đường hầm (tunnel) công khai, giúp bạn có thể truy cập chúng từ bất kỳ đâu qua Internet một cách dễ dàng.
 
