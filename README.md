@@ -46,7 +46,7 @@ Cả hai ứng dụng đều sử dụng `pyngrok` để tạo một đường h
     * Lưu đoạn mã "Trình Xác Thực Chữ Ký Số" vào một ô.
 
 3.  **Cấu hình Ngrok Authtoken:**
-    * Mở cả hai tệp `generator.py` và `verifier.py`.
+    * Mở cả hai ô code.
     * Tìm dòng sau và thay thế `YOUR_NGROK_AUTH_TOKEN` bằng token thật của bạn:
         ```python
         NGROK_AUTH_TOKEN = "YOUR_NGROK_AUTH_TOKEN" #<-- THAY TOKEN CỦA BẠN VÀO ĐÂY
