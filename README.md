@@ -77,18 +77,17 @@ Cả hai ứng dụng đều sử dụng `pyngrok` để tạo một đường h
 
 #### Bước 2: Xác thực Chữ ký số
 
-1.  Mở một cửa sổ terminal mới (giữ nguyên terminal cũ đang chạy `generator.py`).
-2.  Chạy ứng dụng xác thực:
+1.  Chạy ứng dụng xác thực:
     ```bash
     bấm núi play ở góc trái màn hình
     ```
-3.  Một URL Ngrok mới sẽ được tạo cho trình xác thực. Mở URL này trong trình duyệt.
-4.  Trên trang xác thực, bạn cần cung cấp 3 thông tin:
+2.  Một URL Ngrok mới sẽ được tạo cho trình xác thực. Mở URL này trong trình duyệt.
+3.  Trên trang xác thực, bạn cần cung cấp 3 thông tin:
     * **Tải lên tệp gốc:** Tải lên chính xác tệp bạn đã dùng để tạo chữ ký ở Bước 1.
     * **Dán chữ ký số:** Dán chuỗi Chữ ký số (dạng hex) bạn đã sao chép từ trình tạo.
     * **Dán nội dung khóa công khai:** Dán toàn bộ nội dung Khóa Công khai (bắt đầu bằng `-----BEGIN PUBLIC KEY-----` và kết thúc bằng `-----END PUBLIC KEY-----`).
-5.  Nhấp vào nút **"Xác thực"**.
-6.  Kết quả sẽ được hiển thị:
+4.  Nhấp vào nút **"Xác thực"**.
+5.  Kết quả sẽ được hiển thị:
     * `✅ Xác thực thành công! Đây là chữ ký hợp lệ.` nếu mọi thông tin đều khớp.
     * `❌ Xác thực không thành công! Chữ ký không khớp với tệp.` nếu tài liệu đã bị thay đổi hoặc chữ ký/khóa công khai không đúng.
 
